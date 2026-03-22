@@ -1,8 +1,10 @@
 const express = require("express");
+const path = require("node:path");
 const session = require("express-session");
 const passport = require("passport");
 const { pool } = require("./db/setup/connections");
 const pgSession = require('connect-pg-simple')(session);
+const appRouter = require("./routes/appRouter");
 
 require('dotenv').config();
 
@@ -20,7 +22,7 @@ app.set("view engine", "ejs");
 
 //add session store
 app.use(session({
-    secret: process.env.secret,
+    secret: process.env.SECRET,
     resave: false,
     saveUninitialized: false,
     createTableIfMissing: true,
@@ -34,16 +36,21 @@ app.use(passport.session());
 
 /** ----------   PASSPORT AUTHENTICATION   ----------- **/
 
-require("config/passport");
+require("./config/passport");
 
 app.use(passport.session());
 
     //for debugging
 app.use((req, res, next) => {
-    console.log(req.session);
-    console.log(req.user);
+    console.log(`session: ${req.session}`);
+    console.log(`user: ${req.user}`);
     next();
 })
+
+/** -------------------   ROUTERS   -------------------- **/
+app.use("/", appRouter);
+
+
 /** -------------------   SERVER   -------------------- **/
 // error handler
 app.use(function(err, req, res, next) {
@@ -55,6 +62,7 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   //TODO
   //res.render('error');
+  console.log(err.message);
   res.send("Something went wrong.");
 });
 

@@ -1,0 +1,14 @@
+<link rel="stylesheet" href="/styles/navbar.css">
+<div class="navbar">
+    <ul>
+        <li><a href="/">Home</a></li>
+        <% if (locals.user) {%>
+            <li>&#128516;<%= local.users.username%></li>
+            <li><a href="/new-message">Create Message</a></li>
+            <li><a href="/logout">Logout</a></li>
+        <%} else {%>
+            <li><a href="/login">Login</a></li>
+            <li><a href="/signup">Register</a></li>
+        <% } %>
+    </ul>
+</div>
