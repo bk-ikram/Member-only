@@ -5,6 +5,7 @@ const passport = require("passport");
 const { pool } = require("./db/setup/connections");
 const pgSession = require('connect-pg-simple')(session);
 const appRouter = require("./routes/appRouter");
+const moment = require("moment");
 
 require('dotenv').config();
 
@@ -17,6 +18,9 @@ app.use(express.urlencoded({ extended: false }));
 
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
+
+/** -------------   Make libraries available in ejs files   -------------  **/
+app.locals.moment = moment;
 
 /** -------------   SESSION SETUP   -------------  **/
 

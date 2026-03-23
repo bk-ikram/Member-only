@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const appRouter = Router();
 const appController = require("../controllers/appController");
-const { signupValidation } = require("../middleware/validation");
+const { signupValidation, messageValidation } = require("../middleware/validation");
 
 //universal
 appRouter.use((req, res, next) => {
@@ -31,5 +31,11 @@ appRouter.post("/login"
 appRouter.get("/logout", appController.logoutGet);
 
 //new-message
+
+appRouter.get("/new-message",appController.messageFormGet);
+
+appRouter.post("/new-message"
+                ,messageValidation
+                ,appController.messageFormPost);
 
 module.exports = appRouter;

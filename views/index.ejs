@@ -5,8 +5,35 @@
   <title><%= title %></title>
 </head>
 <body>
+  <!-- last name can be viewed if use is admin, or member -->
+  <% const canSeeAllLastnames = locals.user?.isAdmin || locals.user?.isMember  %>
   <%- include('partials/navBar') %>
   <h1><%= title %></h1>
-  <h2>Welcome to Dardish</h2>
+  <% if (locals.user) {%>
+    <p>Click <a href="/new-message">here</a> to create a new message.</p>
+  <% } else {%>
+    <p>In order to create a new message, please <a href="/login">login</a> first.</p>
+  <% };%>
+  <% locals.messages.forEach( (m) => { %>
+    <!-- last name can be viewed if use is admin, or member, or is own post -->
+    <% const canViewLastName = canSeeAllLastnames ||  m.userid === locals.user?.userid %>
+    <% const canDelete = locals.user?.isAdmin ||  m.userid === locals.user?.userid %>
+    <div>
+      <p>
+        <h3><%= m.firstname %><%= canViewLastName ? " "+m.lastname : "" %></h3>
+        <h2><%= m.username %> • <%= moment(m.created).fromNow(); %></h2>
+        <% if (canDelete) {%>
+        <form action="\:m.messageid\delete"><button>Delete</button></form>
+        <% }; %>
+      </p>
+      <p>
+        <h4><%= m.title %></h4>
+      </p>
+      <p>
+        <p3><%= m.message %></p3>
+      </p>
+      <hr>
+    </div>
+  <% }); %>
 </body>
 </html>

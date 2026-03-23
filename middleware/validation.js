@@ -35,3 +35,18 @@ module.exports.signupValidation = [
         return true;
     }),
 ];
+
+module.exports.messageValidation = [
+    body("title")
+        .trim()
+        .notEmpty()
+        .withMessage("Title " + emptyMsg)
+        .isLength({min: 1, max: 100})
+        .withMessage("Title should be between 1 and 100 characters"),
+    body("message")
+        .trim()
+        .notEmpty()
+        .withMessage("message " + emptyMsg)
+        .isLength({min: 1, max: 200})
+        .withMessage("Message should be between 1 and 200 characters")
+]

@@ -1,11 +1,13 @@
 const { validationResult } = require("express-validator");
 const { genPassword } = require("../lib/passwordUtils");
-const { insertUser } = require("../db/query");
+const { insertUser, insertMessage, getAllMessageDetails } = require("../db/query");
 const passport = require("passport");
 
-exports.appGet = ( req, res) => {
+exports.appGet = async( req, res) => {
+    const messages = await getAllMessageDetails();
     res.render("index", {
-        title: "Dardish Homepage"
+        title: "Welcome to Dardish"
+        ,messages: messages
     });
 };
 
@@ -65,3 +67,36 @@ exports.logoutGet = (req, res, next) => {
     res.redirect('/');
   });
 }
+
+exports.messageFormGet = (req, res, next) => {
+  res.render("messageForm", {
+        title: "New Message"
+    });
+}
+
+exports.messageFormPost = async(req, res, next) => {
+    try{
+        const errors = validationResult(req);
+
+        if(!errors.isEmpty()){
+            console.log(req.body);
+            res.errors = errors.array;
+            res.render("messageForm",{
+                title: "Creating Message Failed",
+                errors: errors.array(),
+                userInput: req.body,
+            })
+        }
+        else {
+            const { title, message } = req.body;
+            const userid = req.user.userid;
+            //need to insert message into the db
+            await insertMessage(userid, title, message);
+            //redirect to homepage
+            res.redirect('/');
+        }
+    }
+    catch (err) {
+        next(err);
+    }
+};
