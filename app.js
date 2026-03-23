@@ -25,9 +25,9 @@ app.use(session({
     secret: process.env.SECRET,
     resave: false,
     saveUninitialized: false,
-    createTableIfMissing: true,
     store: new pgSession({
-        pool: pool
+        pool: pool,
+        createTableIfMissing: true
     }),
     cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 } //30 days
 }));
@@ -42,8 +42,8 @@ app.use(passport.session());
 
     //for debugging
 app.use((req, res, next) => {
-    console.log(`session: ${req.session}`);
-    console.log(`user: ${req.user}`);
+    console.log(`session: ${JSON.stringify(req.session)}`);
+    console.log(`user: ${JSON.stringify(req.user)}`);
     next();
 })
 

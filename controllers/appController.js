@@ -1,6 +1,7 @@
 const { validationResult } = require("express-validator");
 const { genPassword } = require("../lib/passwordUtils");
 const { insertUser } = require("../db/query");
+const passport = require("passport");
 
 exports.appGet = ( req, res) => {
     res.render("index", {
@@ -44,3 +45,23 @@ exports.signupPost = async( req, res, next) => {
         next(err);
     }
 };
+
+exports.loginGet = ( req, res) => {
+    res.render("login", {
+        title: "Login to your Account",
+        loginFailed: req.query.error === "true"
+    });
+};
+
+exports.loginPost = passport.authenticate("local", {
+                        successRedirect: "/",
+                        failureRedirect: "/login?error=true",
+                        failureMessage: true
+                        });
+
+exports.logoutGet = (req, res, next) => {
+  req.logout(function(err) {
+    if (err) { return next(err); }
+    res.redirect('/');
+  });
+}

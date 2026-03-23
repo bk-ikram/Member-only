@@ -20,7 +20,16 @@ appRouter.post("/signup"
                 ,appController.signupPost);
 
 //login
-//register
+
+appRouter.get("/login",appController.loginGet);
+
+appRouter.post("/login"
+                ,appController.loginPost);
+
+
+//logout
+appRouter.get("/logout", appController.logoutGet);
+
 //new-message
 
 module.exports = appRouter;
