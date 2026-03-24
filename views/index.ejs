@@ -23,7 +23,7 @@
         <h3><%= m.firstname %><%= canViewLastName ? " "+m.lastname : "" %></h3>
         <h2><%= m.username %> • <%= moment(m.created).fromNow(); %></h2>
         <% if (canDelete) {%>
-        <form action="\:m.messageid\delete"><button>Delete</button></form>
+        <form action="\<%- m.messageid %>\delete" method="post"><button type="submit">Delete</button></form>
         <% }; %>
       </p>
       <p>

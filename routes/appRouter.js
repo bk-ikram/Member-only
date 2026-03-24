@@ -2,6 +2,7 @@ const { Router } = require('express');
 const appRouter = Router();
 const appController = require("../controllers/appController");
 const { signupValidation, messageValidation } = require("../middleware/validation");
+const { isAuth, isAdmin } = require('../middleware/authMiddleware');
 
 //universal
 appRouter.use((req, res, next) => {
@@ -37,5 +38,10 @@ appRouter.get("/new-message",appController.messageFormGet);
 appRouter.post("/new-message"
                 ,messageValidation
                 ,appController.messageFormPost);
+
+//delete message
+appRouter.post("/:messageid/delete"
+                ,isAuth
+                ,appController.messageDeletePost);
 
 module.exports = appRouter;

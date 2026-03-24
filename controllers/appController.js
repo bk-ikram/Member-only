@@ -1,6 +1,12 @@
 const { validationResult } = require("express-validator");
 const { genPassword } = require("../lib/passwordUtils");
-const { insertUser, insertMessage, getAllMessageDetails } = require("../db/query");
+const { 
+        insertUser, 
+        insertMessage, 
+        getAllMessageDetails,
+        deleteMessage,
+        verifyMessageAuthor
+     } = require("../db/query");
 const passport = require("passport");
 
 exports.appGet = async( req, res) => {
@@ -97,6 +103,25 @@ exports.messageFormPost = async(req, res, next) => {
         }
     }
     catch (err) {
+        next(err);
+    }
+};
+
+exports.messageDeletePost = async(req, res, next) => {
+    try{
+        const messageId = req.params.messageid;
+        const { userid, isAdmin} = req.user;
+        const isOwner = await verifyMessageAuthor(messageId, userid);
+        if(isOwner || isAdmin){
+            await deleteMessage(messageId);
+            res.redirect("/");
+        }
+        else{
+            res.status(401).send("You are not allowed to perform this action.")
+        }
+        
+    }
+    catch(err){
         next(err);
     }
 };
