@@ -1,4 +1,5 @@
 const { body } = require("express-validator");
+require('dotenv').config();
 
 const emptyMsg = "cannot be empty";
 const lengthMsg = "should be between 5 and 30 characters";
@@ -49,4 +50,16 @@ module.exports.messageValidation = [
         .withMessage("message " + emptyMsg)
         .isLength({min: 1, max: 200})
         .withMessage("Message should be between 1 and 200 characters")
+]
+
+module.exports.membershipValidation = [
+    body("membership_secret")
+        .trim()
+        .custom((value, { res }) => {
+        if (value.toLowerCase() !== process.env.MEMBERSHIP_SECRET){
+            console.log("redirecting to membership_failed=true");
+            res.redirect("/?membership_failed=true");
+        };
+        return true;
+        })
 ]

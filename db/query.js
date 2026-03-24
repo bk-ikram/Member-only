@@ -45,6 +45,13 @@ where m.messageid = $1
 AND u.userid = $2;
 `
 
+const grantMembershipSQL = `
+UPDATE users 
+SET ismember = true
+WHERE userid = $1;
+`;
+
+
 async function insertUser(username, firstname, lastname, hash){
     await pool.query(insertUserSQL,[username, firstname, lastname, hash]);
  }
@@ -66,10 +73,17 @@ async function verifyMessageAuthor(messageid, userid){
    const data = await pool.query(verifyMessageAuthorSQL, [messageid,userid]);
    return data.rows.length > 0;
 }
+
+//grantMembershipSQL
+async function grantMembership(userid){
+   await pool.query(grantMembershipSQL, [userid]);
+}
+
 module.exports= {
     insertUser,
     insertMessage,
     getAllMessageDetails,
     deleteMessage,
-    verifyMessageAuthor
+    verifyMessageAuthor,
+    grantMembership
 }

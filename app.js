@@ -66,6 +66,7 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   //TODO
   //res.render('error');
+  console.log(err.stack);
   console.log(err.message);
   res.send("Something went wrong.");
 });

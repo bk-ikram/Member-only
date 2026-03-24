@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const appRouter = Router();
 const appController = require("../controllers/appController");
-const { signupValidation, messageValidation } = require("../middleware/validation");
+const { signupValidation, messageValidation, membershipValidation } = require("../middleware/validation");
 const { isAuth, isAdmin } = require('../middleware/authMiddleware');
 
 //universal
@@ -43,5 +43,14 @@ appRouter.post("/new-message"
 appRouter.post("/:messageid/delete"
                 ,isAuth
                 ,appController.messageDeletePost);
+
+
+
+//become a member
+
+appRouter.post("/become-member"
+                ,isAuth
+                ,membershipValidation
+                ,appController.becomeMemberPost);
 
 module.exports = appRouter;

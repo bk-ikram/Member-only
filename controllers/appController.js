@@ -5,7 +5,8 @@ const {
         insertMessage, 
         getAllMessageDetails,
         deleteMessage,
-        verifyMessageAuthor
+        verifyMessageAuthor,
+        grantMembership
      } = require("../db/query");
 const passport = require("passport");
 
@@ -14,6 +15,8 @@ exports.appGet = async( req, res) => {
     res.render("index", {
         title: "Welcome to Dardish"
         ,messages: messages
+        ,attemptMembership: req.query.join === "true"
+        ,membership_failed: req.query.membership_failed === "true"
     });
 };
 
@@ -85,7 +88,6 @@ exports.messageFormPost = async(req, res, next) => {
         const errors = validationResult(req);
 
         if(!errors.isEmpty()){
-            console.log(req.body);
             res.errors = errors.array;
             res.render("messageForm",{
                 title: "Creating Message Failed",
@@ -121,6 +123,18 @@ exports.messageDeletePost = async(req, res, next) => {
         }
         
     }
+    catch(err){
+        next(err);
+    }
+};
+
+
+
+exports.becomeMemberPost = async(req, res, next) => {
+    try{
+        await grantMembership(req.userid);
+        res.redirect("/");
+        }
     catch(err){
         next(err);
     }
