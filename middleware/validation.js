@@ -57,8 +57,7 @@ module.exports.membershipValidation = [
         .trim()
         .custom((value, { res }) => {
         if (value.toLowerCase() !== process.env.MEMBERSHIP_SECRET){
-            console.log("redirecting to membership_failed=true");
-            res.redirect("/?membership_failed=true");
+            throw new Error("Invalid membership secret");
         };
         return true;
         })

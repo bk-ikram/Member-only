@@ -6,16 +6,15 @@
 </head>
 <body>
   <!-- last name can be viewed if use is admin, or member -->
-  <% const canSeeAllLastnames = locals.user?.isAdmin || locals.user?.isMember  %>
+  <% const canSeeAllAuthors = locals.user?.isadmin || locals.user?.isMember  %>
   <%- include('partials/navBar') %>
-  <% console.log(locals) %>
   <h1><%= title %></h1>
   <% if (locals.user) {%>
     <p>Click <a href="/new-message">here</a> to create a new message.</p>
   <% } else {%>
     <p>In order to create a new message, please <a href="/login">login</a> first.</p>
   <% };%>
-  <% if (locals.user && !locals.user.isMember) {%>
+  <% if (locals.user && !locals.user.ismember && !locals.user.isadmin) {%>
       <p>To see usernames, you need to <a href="/?join=true">join our membership</a> first.</p>
   <% } %>
     <% if (locals.membership_failed) {%>
@@ -24,18 +23,18 @@
   <% if (locals.attemptMembership) {%>
       <form action="/become-member" method="post">
         <label for="membership_secret">Please enter the last name of the creator of Jojo's Bizzare adventure.</label>
-        <input id="membership_secret" id = "membership_secret" type="text">
+        <input id="membership_secret" name= "membership_secret" type="text">
         <button>Become a Member</button>
       </form>
   <% } %>
   <% locals.messages.forEach( (m) => { %>
     <!-- last name can be viewed if use is admin, or member, or is own post -->
-    <% const canViewLastName = canSeeAllLastnames ||  m.userid === locals.user?.userid %>
-    <% const canDelete = locals.user?.isAdmin ||  m.userid === locals.user?.userid %>
+    <% const canSeeAuthor = canSeeAllAuthors||  m.userid === locals.user?.userid %>
+    <% const canDelete = locals.user?.isadmin ||  m.userid === locals.user?.userid %>
     <div>
       <p>
-        <h3><%= m.firstname %><%= canViewLastName ? " "+m.lastname : "" %></h3>
-        <h2><%= m.username %> • <%= moment(m.created).fromNow(); %></h2>
+        <h3><%= canSeeAuthor ? m.firstname : "****"%></h3>
+        <h4>@<%= canSeeAuthor ? m.username : "****" %> • <%= moment(m.created).fromNow(); %></h4>
         <% if (canDelete) {%>
         <form action="\<%- m.messageid %>\delete" method="post"><button type="submit">Delete</button></form>
         <% }; %>

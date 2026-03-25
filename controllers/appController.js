@@ -12,6 +12,7 @@ const passport = require("passport");
 
 exports.appGet = async( req, res) => {
     const messages = await getAllMessageDetails();
+    console.log('req query is',req.query);
     res.render("index", {
         title: "Welcome to Dardish"
         ,messages: messages
@@ -112,9 +113,9 @@ exports.messageFormPost = async(req, res, next) => {
 exports.messageDeletePost = async(req, res, next) => {
     try{
         const messageId = req.params.messageid;
-        const { userid, isAdmin} = req.user;
+        const { userid, isadmin} = req.user;
         const isOwner = await verifyMessageAuthor(messageId, userid);
-        if(isOwner || isAdmin){
+        if(isOwner || isadmin){
             await deleteMessage(messageId);
             res.redirect("/");
         }
@@ -132,7 +133,10 @@ exports.messageDeletePost = async(req, res, next) => {
 
 exports.becomeMemberPost = async(req, res, next) => {
     try{
-        await grantMembership(req.userid);
+        const errors = validationResult(req);
+        if(!errors.isEmpty())
+            return res.redirect("/?membership_failed=true");            
+        await grantMembership(req.user.userid);
         res.redirect("/");
         }
     catch(err){
